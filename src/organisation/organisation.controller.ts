@@ -1,9 +1,9 @@
 import { Controller, Get, Param, UseGuards, Req, Request, NotFoundException, Post, Body } from '@nestjs/common';
 import { OrganisationService } from './organisation.service';
 // import { Request } from 'express';
-import { AuthGuard, CustomBadRequestException, OrganisationMemberGuard } from 'src/common';
-import { AddUserDto, CreateOrganisationDto } from 'src/core';
-import { UserService } from 'src/user/user.service';
+import { AuthGuard, CustomBadRequestException, OrganisationMemberGuard } from '../common';
+import { AddUserDto, CreateOrganisationDto } from '../core';
+import { UserService } from '../user/user.service';
 
 @Controller('api/organisations')
 export class OrganisationController {

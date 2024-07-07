@@ -2,9 +2,8 @@ import { Injectable, ConflictException, BadRequestException, HttpException, Http
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { OrganisationService } from '../organisation/organisation.service';
-import { CreateUserDto } from 'src/core';
-import { error } from 'console';
-import { CustomBadRequestException } from 'src/common';
+import { CreateUserDto } from '../core';
+import { CustomBadRequestException } from '../common';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +22,7 @@ export class AuthService {
     const user = await this.userService.create(createUserDto);
     const organisationName = `${createUserDto.firstName}'s Organisation`;
     const organisation = await this.organisationService.create({ name: organisationName }, user);
-    const accessToken = this.jwtService.sign({ userId: user.userId });
+    const accessToken = this.jwtService.sign({ userId: user.userId, email: user.email });
     const { password, ...result } = user
     return { accessToken, user: result };
   }

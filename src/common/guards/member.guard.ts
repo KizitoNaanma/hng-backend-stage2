@@ -1,11 +1,9 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { OrganisationService } from 'src/organisation/organisation.service';
+import { OrganisationService } from '../../organisation/organisation.service';
 
 @Injectable()
 export class OrganisationMemberGuard implements CanActivate {
-  constructor(
-    private readonly organisationService: OrganisationService,
-  ) {}
+  constructor(private readonly organisationService: OrganisationService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -21,16 +19,14 @@ export class OrganisationMemberGuard implements CanActivate {
       return true;
     }
 
-    // Get the organization(s) of the target user
-    const targetUserOrganisations = await this.organisationService.findByUser(targetUserId);
+    // Get the organization(s) of the target user and the requesting user
+    const [targetUserOrganisations, requestingUserOrganisations] = await Promise.all([
+      this.organisationService.findByUser(targetUserId),
+      this.organisationService.findByUser(userId),
+    ]);
 
-    // Check if the requesting user is a member of or has created any of the target user's organizations
-    const organisationsOfRequestingUser = await this.organisationService.findByUser(userId);
-
-    const isAuthorized = organisationsOfRequestingUser.some(org =>
-      targetUserOrganisations.some(targetOrg => 
-        targetOrg.orgId === org.orgId
-      )
+    const isAuthorized = requestingUserOrganisations.some(org =>
+      targetUserOrganisations.some(targetOrg => targetOrg.orgId === org.orgId)
     );
 
     if (!isAuthorized) {

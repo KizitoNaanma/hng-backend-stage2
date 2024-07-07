@@ -1,7 +1,7 @@
-import { Controller, Post, Body, HttpException, HttpStatus, UsePipes } from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus, UsePipes, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto, SignInDto } from 'src/core';
-import { CustomBadRequestException, ValidationPipe } from 'src/common';
+import { CreateUserDto, SignInDto } from '../core';
+import { CustomBadRequestException, ValidationPipe } from '../common';
 // import { Public } from './public.decorator';
 
 @Controller('auth')
@@ -20,7 +20,7 @@ export class AuthController {
         data: user,
       };
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         throw new CustomBadRequestException('Registration unsuccessful');
 
     }
@@ -28,6 +28,7 @@ export class AuthController {
 
 //   @Public()
   @Post('login')
+  @HttpCode(200)
   async signIn(@Body() signInDto: SignInDto) {
     try {
       const result = await this.authService.signIn(signInDto.email, signInDto.password);
